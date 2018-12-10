@@ -26,7 +26,7 @@ def ProcessFile(request):
     if request.method=="GET":
         form=GetFile()
         context['form']=form
-        return render(request,'createtenant.html',context)
+        return render(request,'uploaddata.html',context)
 
     elif request.method=="POST":
         form=GetFile(request.POST,request.FILES)

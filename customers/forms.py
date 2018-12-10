@@ -19,7 +19,6 @@ class TenantForm(forms.ModelForm):
 
 class GetFile(forms.Form):
     inputfile = forms.FileField()
-    #erp= forms.ChoiceField(choices=[],required=True)
     
     def __init__(self, *args, **kwargs):
         super(GetFile, self).__init__(*args, **kwargs)
