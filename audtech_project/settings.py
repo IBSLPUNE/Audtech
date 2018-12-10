@@ -4,7 +4,7 @@ from collections import OrderedDict
 # Django settings for audtech_project project.
 
 DEBUG = True
-
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )

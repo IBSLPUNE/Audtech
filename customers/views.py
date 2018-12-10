@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from models import Client
 import pandas as pd
+from django.conf import settings
 def CreateTenant(request):
     context={}
     if request.method=="GET":
@@ -17,7 +18,9 @@ def CreateTenant(request):
             obj.save()
             return HttpResponse("Tenant " + request.POST.get("name") + " is created")
             
-
+from customers.models import FinalTable,Mapping
+from django.core.files.storage import FileSystemStorage
+import os
 def ProcessFile(request):
     context={}
     if request.method=="GET":
@@ -29,11 +32,25 @@ def ProcessFile(request):
         form=GetFile(request.POST,request.FILES)
         if form.is_valid():
             myfile=request.FILES['inputfile']
-            df=pd.read_csv(myfile)
+            fs = FileSystemStorage(location=settings.BASE_DIR+'/filesfolder') #defaults to   MEDIA_ROOT 
+            savedfile=fs.save(myfile.name,myfile) 
+            df=pd.read_csv(settings.BASE_DIR+'/filesfolder/'+savedfile)
             lscols=df.columns.tolist()
             lscols.pop()
+            columnnames=[i for i in lscols]
+            pairs=[]
+            for i in columnnames:
+                f=Mapping.objects.get(source_filed__iexact=i)
+                pairs.append((i,f.final_field.lower()))
+            for idx in range(0,len(df)):
+                obj=FinalTable()
+                for x in pairs: 
+                    exec("obj.%s = '%s'" %(x[1],df[x[0]][idx]))
+                obj.save()
+            os.remove(settings.BASE_DIR+'/filesfolder/'+savedfile)
             return HttpResponse(df.to_string())
 
-            
+
+
 
         

@@ -27,7 +27,7 @@ class Engagement(models.Model):
     fiscal_start_month=models.DateField(blank=True,null=True)
     additional_info=models.TextField(blank=True,null=True)
     created_date=models.DateField(null=True,blank=True,auto_now_add=True)
-
+"""
 class FinalTable(models.Model):
     client=models.CharField(max_length=200, blank=True, null=True)
     engangement=models.CharField(max_length=200, blank=True, null=True)
@@ -54,7 +54,7 @@ class FinalTable(models.Model):
     authorised_by=models.CharField(max_length=200, blank=True, null=True)
     auto_manual=models.CharField(max_length=200, blank=True, null=True)
     created_date=models.DateField(null=True,blank=True,auto_now_add=True)
-
+"""
 class OriginalData(models.Model):
     client=models.CharField(max_length=200, blank=True, null=True)
     engangement=models.CharField(max_length=200, blank=True, null=True)
