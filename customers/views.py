@@ -39,9 +39,15 @@ def ProcessFile(request):
             lscols.pop()
             columnnames=[i for i in lscols]
             pairs=[]
+            print(request.POST.get("erp"))
             for i in columnnames:
-                f=Mapping.objects.get(source_filed__iexact=i)
-                pairs.append((i,f.final_field.lower()))
+                try:
+                    f=Mapping.objects.get(source_filed__iexact=i,erp=request.POST.get("erp"))
+                    pairs.append((i,f.final_field.lower()))
+               
+                except Mapping.DoesNotExist:
+                    os.remove(settings.BASE_DIR+'/filesfolder/'+savedfile)
+                    return HttpResponse(i + ' column in file has error give right column name according to mapping.' )
             for idx in range(0,len(df)):
                 obj=FinalTable()
                 for x in pairs: 
