@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{%block content %}
+    {% load widget_tweaks %}
+<!--  <form method="get">
+    <div class="well">
+      <h2 style="margin-top: 0">Filter</h2>
+      <div class="row">
+        <div class="form-group col-sm-4 col-md-3 ">
+          {{ filter.form.CREATED_BY.label_tag }}
+          {% render_field filter.form.CREATED_BY  class="form-control" id="places"%}
+        </div>
+        <div class="form-group col-sm-4 col-md-3 ">
+          {{ filter.form.STATUS.label_tag }}
+          {% render_field filter.form.STATUS class="form-control"id="places" %}
+        </div>
+        <div class="form-group col-sm-4 col-md-3 ">
+          {{ filter.form.MAIN_ACNT_CATG.label_tag }}
+          {% render_field filter.form.MAIN_ACNT_CATG class="form-control"id="places" %}
+        </div>
+        <div class="form-group col-sm-4 col-md-3 ">
+          {{ filter.form.TD_DOC_DT.label_tag }}
+          {% render_field filter.form.TD_DOC_DT class="form-control" id="places"%}
+        </div>
+     </div>
+      <button type="submit" class="btn btn-primary">
+        <span class="glyphicon glyphicon-search"></span> Search
+      </button>
+    </div> -->
+    <div class="table-responsive">
+        <table id="example" class="table table-bordered"  >
+        <thead >
+            <tr>
+                <th>ID  </th>
+                <th>STATUS </th>
+                <th>TYPE   </th>
+                <th>TD DOC DT   </th>
+                <th>SR NO  </th>
+                <th>TD TRAN CODE  </th>
+                <th>TD DOC NO</th>
+                <th>MAIN ACNT CATG</th>
+                <th>TD MAIN ACNT CODE</th>
+                <th>MAIN ACNT NAME</th>
+                <th>TD SUB ACNT CODE</th>
+                <th>DR IN TZS</th>
+               <th>CR IN TZS</th>
+                <th>TD CURR CODE</th>
+                <th>CR IN FC</th>
+                <th>CREATED BY</th>
+                <th>AUTHORISED BY</th>
+                <th>GENERATED</th>                   
+            </tr>
+        </thead>
+        <tbody>
+            {% for data in data %}
+            <tr>
+                <td>{{ data.id}}</td>
+                <td>{{ data.TYPE}}</td>
+                <td>{{ data.STATUS}}</td>
+                <td>{{ data.TD_DOC_DT}}</td>
+                <td>{{ data.SR_NO}}</td>
+                <td>{{ data.TD_TRAN_CODE}}</td>
+                <td>{{ data.TD_DOC_NO}}</td>
+                <td>{{ data.MAIN_ACNT_CATG}}</td>
+                <td>{{ data.TD_MAIN_ACNT_CODE}}</td>
+                <td>{{ data.MAIN_ACNT_NAME}}</td>
+                <td>{{ data.TD_SUB_ACNT_CODE}}</td>
+                <td>{{ data.DR_IN_TZS}}</td>
+                <td>{{ data.CR_IN_TZS}}</td>
+                <td>{{ data.TD_CURR_CODE}}</td>
+                <td>{{ data.CR_IN_FC}}</td>
+                <td>{{ data.CREATED_BY}}</td>
+                <td>{{ data.AUTHORISED_BY}}</td>
+                <td>{{ data.GENERATED}}</td>
+            </tr>
+              {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+            </tr>
+        </tfoot>
+    </table>
+  </div>
+{% endblock %}
+{% block extrajs %}
+  <script   src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js "></script> 
+   <script type="text/javascript">
+$(document).ready(function() {
+    $('#example').DataTable( {
+        dom: 'Bfrtip',
+        buttons: [
+            'copy', 'csv', 'excel', 'pdf', 'print'
+        ]
+    } );
+} );
+</script>
+{% endblock %}
+    
+   
+    
+    
+    

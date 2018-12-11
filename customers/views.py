@@ -1,6 +1,6 @@
 from forms import TenantForm,GetFile
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse,Http404
 from models import Client
 import pandas as pd
 from django.conf import settings
@@ -23,6 +23,7 @@ from django.core.files.storage import FileSystemStorage
 import os
 def ProcessFile(request):
     context={}
+    context['clientname']=request.session.get('clientname')
     if request.method=="GET":
         form=GetFile()
         context['form']=form
@@ -47,16 +48,11 @@ def ProcessFile(request):
                
                 except Mapping.DoesNotExist:
                     os.remove(settings.BASE_DIR+'/filesfolder/'+savedfile)
-                    return HttpResponse(i + ' column in file has error give right column name according to mapping.' )
+                    return HttpResponse(request.POST.get("erp") + '  ERP is not in Mapping Table.' )
             for idx in range(0,len(df)):
                 obj=FinalTable()
                 for x in pairs: 
                     exec("obj.%s = '%s'" %(x[1],df[x[0]][idx]))
                 obj.save()
             os.remove(settings.BASE_DIR+'/filesfolder/'+savedfile)
-            return HttpResponse(df.to_string())
-
-
-
-
-        
+            return HttpResponse('<div align=Center> <h2> Data is loaded Successfully </h2> </div>'+df.to_html(index=False,classes="table table-striped table-bordered table-hover table-condensed",))

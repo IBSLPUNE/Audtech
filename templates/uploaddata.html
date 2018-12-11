@@ -10,11 +10,23 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 <body>
+  <style>
+    .select{
+        width:30%;
+    }
+    </style>
+{% include 'nav.html' %}
+<div class="container"  align=center >
 
-<div class="container">
-  <h2>Create Tenant</h2>
+  <h2>Import Data</h2>
+  <h1>Drag N Drop</h1> 
+  
   {% crispy form %}
 </div>
+
+
+
+
 
 </body>
 </html>

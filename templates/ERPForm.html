@@ -1,0 +1,16 @@
+
+{% load crispy_forms_tags %}
+<h3> Financial System-Audtech Mapping</h3>
+<div class="row" align=Center style=" width:400px">
+    {%if form %}
+    {% crispy form %}
+    {% endif %}
+</div>
+{%if data %}
+
+{% for d in data %}
+{{d.erp}}
+{{d.final_field}}
+{{d.source_field}}
+{% endfor %}
+{% endif %}

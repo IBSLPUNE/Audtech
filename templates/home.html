@@ -1,0 +1,11 @@
+{% block title %} Audtech {% endblock %}
+
+{% if user.is_authenticated %}
+{{user.username}}
+{{user.user_type}}
+<a href="{% url 'logout' %}"> <button> log out </button> </a>
+{% else %}
+<p> tum pehle login to kro</p>
+<a href="{% url 'login' %}"> <button> log in </button> </a>
+
+{% endif %}

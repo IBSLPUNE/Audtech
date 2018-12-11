@@ -8,10 +8,10 @@ class Client(TenantMixin):
     created_on = models.DateField(auto_now_add=True)
 
 class Mapping(models.Model):
-    erp=models.CharField(max_length=200, blank=True, null=True)
+    erp=models.CharField(max_length=200, blank=True, null=True,verbose_name='Financial System')
     transaction_type=models.CharField(max_length=200, blank=True, null=True)
-    final_field=models.CharField(max_length=200, blank=True, null=True)
-    source_filed=models.CharField(max_length=200, blank=True, null=True)
+    final_field=models.CharField(max_length=200, blank=True, null=True,verbose_name='Audtech Field')
+    source_filed=models.CharField(max_length=200, blank=True, null=True,verbose_name='System Field')
 
 class FinalTable(models.Model):
     client=models.CharField(max_length=200, blank=True, null=True)

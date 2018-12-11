@@ -10,7 +10,18 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 <body>
+  
+{% if request.tenant %}
+      <a href="http://{{ request.tenant.domain_url }}:8000">{{ request.tenant.name }}</a>
+      (<code>{{ request.tenant.schema_name }}</code>, <code>{{ request.tenant.domain_url }}</code>).
 
+      Available Tenants:
+      {% else %}
+      None.
+      {% endif %}
+  {% for tenant in tenants_list %}
+      <a href="http://{{ tenant.domain_url }}:8000">{{ tenant.name }}</a> &middot;
+{% endfor %}</p>
 <div class="container">
   <h2>Create Tenant</h2>
   {% crispy form %}

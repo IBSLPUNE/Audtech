@@ -1,13 +1,14 @@
 from __future__ import unicode_literals
 
 from django.db import models
-from audtech_analytics import  constants# Create your models here.
+from audtech_analytics import  constants
+# Create your models here.
 
     
 class EndClient(models.Model):
      name=models.CharField(max_length=60,null=True,blank=True)
      email=models.EmailField(blank=True, max_length=60, unique=True,null=True)
-     company_ode=models.CharField(max_length=60,null=True,blank=True)
+     company_ode=models.CharField(max_length=60,null=True,blank=True,verbose_name="Company Code")
      description=models.TextField(max_length=200, null=True,blank=True)
      company_type= models.CharField(max_length=60,null=True,blank=True)
      registration_no=models.CharField(max_length=60,null=True,blank=True)
@@ -18,6 +19,8 @@ class EndClient(models.Model):
      contact_no=models.CharField(max_length=90,null=True,blank=True)
      starting_date=models.DateField(null=True,blank=True)
      created_date=models.DateField(null=True,blank=True,auto_now_add=True)
+     def __str__(self):
+         return self.name
 
 class Engagement(models.Model):
     endclient=models.ForeignKey(EndClient,on_delete=models.PROTECT)

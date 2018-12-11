@@ -1,0 +1,49 @@
+
+{% block content %}
+{% load staticfiles %}
+  <div>
+      <a href="/ClientRegister/">
+          <button> New Client </button>
+      </a>
+  </div>
+
+  <table id="example" class="table table-bordered" style="width:100%" style="height:100% ">
+        <thead class="thead-inverse">
+            <tr>
+                <th>id </th>
+                <th>name</th>
+                <th>email </th>
+                <th>company_ode</th>
+                <th>company_type</th>
+                <th>registration_no</th>
+                <th>country</th>
+                <th>starting_date</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for data in data %}
+            <tr>
+                <td>{{ data.id|default:"null"}} </td>
+                <td>{{ data.name|default:"null"}}</td>
+                <td>{{ data.email|default:"null"}}</td>
+                <td>{{ data.company_ode|default:"null"}}</td>
+                <td>{{ data.company_type|default:"null"}}</td>
+                <td>{{ data.registration_no|default:"null"}}</td>
+                <td>{{ data.country|default:"null"}}</td>
+                <td>{{ data.starting_date|default:"null"}}</td>
+                <!-- <td> -->
+                    <!-- <a href="{% url 'Engagement' pk=data.id %}"> -->
+                       <!-- <button img src = "{% static  'chevron-01-512.png'%}" width= "150px"></button> </a> -->
+                <!-- </td> -->
+            </tr>
+              {% endfor %}
+        </tbody>
+           
+        <tfoot>
+            <tr>
+                
+            </tr>
+        </tfoot>
+    </table>
+{% endblock %}
