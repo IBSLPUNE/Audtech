@@ -45,18 +45,22 @@ def ERPMap (request):
     if request.method == 'GET':
         form = ERPform()
         context['form']=form
+        data=Mapping.objects.filter(erp=request.POST.get('erp'))
+        context['data']=data
+            
         return render(request,'ERPForm.html',context)
     elif request.method =='POST':
         form = ERPform(request.POST,request.FILES)
         print(form)
         if form.is_valid():
-            obj=form.save(commit=False)
-            #obj=Mapping.objects.create(source_filed=,final_field=,transaction_type=,erp=)
+            #obj=form.save(commit=False)
+            form=ERPform()
+            context['form']=form
+            obj=Mapping.objects.create(source_filed=request.POST.get("source_filed"),final_field=request.POST.get("final_field"),transaction_type=request.POST.get("transaction_type"),erp=request.POST.get("erp"))
             data=Mapping.objects.filter(erp=request.POST.get('erp'))
             context['data']=data
             
-    else:
-        form=ERPform()
+       
     return render(request,'ERPForm.html',context)
 
 from tenant_schemas.utils import schema_context
@@ -88,4 +92,4 @@ def ClientTable(request):
     Context = { 'data':data }
     return render(request,'ClientTable.html',Context)
 def AnalyticsBoard(request):
-    return render(request,'analytics.html')
+    return render(request,'analytics.htmlchartjs cdn')
