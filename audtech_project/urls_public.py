@@ -3,14 +3,19 @@ from audtech_analytics.views import DisplayData
 from customers.views import CreateTenant,ProcessFile
 # from django.contrib import admin
 from django.conf.urls import url, include
-from audtech_analytics import views
+from audtech_analytics import views 
+from audtech_project import views as Anmol
 from django.conf.urls import url, include
 from django.conf.urls.static import static
 urlpatterns = [
+    url(r'^HomeView$',Anmol.HomeView),
     url(r'^createtenant$', CreateTenant),
     url(r'^processfile$', ProcessFile),
     url(r'^display$', DisplayData),
     url(r'^analytics$', views.AnalyticsBoard),
+    url(r'^login/$', Anmol.LoginView),
+
+    url(r'^logout/$', Anmol.LogoutView),
 
     # url('admin/', admin.site.urls),
     #  url(r'^signup/$', views.signup, name='signup'),

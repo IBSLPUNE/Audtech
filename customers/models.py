@@ -1,18 +1,16 @@
 from django.db import models
 from tenant_schemas.models import TenantMixin
-
+from django.contrib.auth.models import User
 
 class Client(TenantMixin):
-    name = models.CharField(max_length=100)
-    description = models.TextField(max_length=200)
-    created_on = models.DateField(auto_now_add=True)
+   user=models.ForeignKey(User,on_delete=models.DO_NOTHING)
 
 class Mapping(models.Model):
     erp=models.CharField(max_length=200, blank=True, null=True,verbose_name='Financial System')
     transaction_type=models.CharField(max_length=200, blank=True, null=True)
     final_field=models.CharField(max_length=200, blank=True, null=True,verbose_name='Audtech Field')
     source_filed=models.CharField(max_length=200, blank=True, null=True,verbose_name='System Field')
-
+"""
 class FinalTable(models.Model):
     client=models.CharField(max_length=200, blank=True, null=True)
     engangement=models.CharField(max_length=200, blank=True, null=True)
@@ -39,3 +37,4 @@ class FinalTable(models.Model):
     authorised_by=models.CharField(max_length=200, blank=True, null=True)
     auto_manual=models.CharField(max_length=200, blank=True, null=True)
     created_date=models.DateField(null=True,blank=True,auto_now_add=True)
+"""

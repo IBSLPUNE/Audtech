@@ -5,15 +5,22 @@ from customers.models import Mapping
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 
+
+#add login required to required views
+
 class TenantForm(forms.ModelForm):
 
     class Meta:
         model = Client
         fields = '__all__'
+        exclude=['user']
 
     def __init__(self, *args, **kwargs):
         super(TenantForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
+        self.fields["username"]=forms.CharField(required=True)
+        self.fields["password"]=forms.CharField(widget=forms.PasswordInput,required=True)
+        self.fields["name"]=forms.CharField(required=True)
         self.helper.add_input(Submit('submit', 'Create Tenant', css_class='btn-primary'))
         self.helper.form_method = 'POST'
 class ERPform(forms.ModelForm):
@@ -29,8 +36,9 @@ class ERPform(forms.ModelForm):
             last.append((i,i))
         self.fields['final_field']=forms.ChoiceField( choices=last,label="Audtech Field")
         self.helper = FormHelper()
+        # self.helper.form_class = 'blueForms'
         self.helper.add_input(Submit('submit', 'Save', css_class='btn-primary'))
-        self.helper.form_method = 'POST' 
+        self.helper.form_method = 'POST'
 
 class GetFile(forms.Form):
     inputfile = forms.FileField()

@@ -4,6 +4,12 @@ from django.http import HttpResponse,Http404
 from models import Client
 import pandas as pd
 from django.conf import settings
+from customers.models import Mapping
+from audtech_analytics.models import FinalTable
+from django.core.files.storage import FileSystemStorage
+from tenant_schemas.utils import  schema_context
+import os
+from django.contrib.auth.models import User
 def CreateTenant(request):
     context={}
     if request.method=="GET":
@@ -12,15 +18,18 @@ def CreateTenant(request):
         return render(request,'createtenant.html',context)
     elif request.method=="POST":
         form=TenantForm(request.POST)
+        context['form']=form
+       
         if form.is_valid():
-            obj=Client(domain_url=request.POST.get("domain_url"),schema_name=request.POST.get("schema_name"),
-            name=request.POST.get("name"),description=request.POST.get("description"))
+            obj=Client(domain_url=request.POST.get("domain_url"),schema_name=request.POST.get("schema_name"))
+            user=User.objects.create_user(username=request.POST.get("username"),password=request.POST.get("password"))
+            obj.user=user
+            obj.user_id=user.id
             obj.save()
             return HttpResponse("Tenant " + request.POST.get("name") + " is created")
-            
-from customers.models import FinalTable,Mapping
-from django.core.files.storage import FileSystemStorage
-import os
+        else:
+            return render(request,'createtenant.html',context)
+  
 def ProcessFile(request):
     context={}
     context['clientname']=request.session.get('clientname')
@@ -30,8 +39,9 @@ def ProcessFile(request):
         return render(request,'uploaddata.html',context)
 
     elif request.method=="POST":
-        form=GetFile(request.POST,request.FILES)
-        if form.is_valid():
+       with schema_context(request.session.get("schema_name")):
+         form=GetFile(request.POST,request.FILES)
+         if form.is_valid():
             myfile=request.FILES['inputfile']
             fs = FileSystemStorage(location=settings.BASE_DIR+'/filesfolder') #defaults to   MEDIA_ROOT 
             savedfile=fs.save(myfile.name,myfile) 
@@ -42,13 +52,13 @@ def ProcessFile(request):
             pairs=[]
             print(request.POST.get("erp"))
             for i in columnnames:
+                print(i)
                 try:
                     f=Mapping.objects.get(source_filed__iexact=i,erp=request.POST.get("erp"))
                     pairs.append((i,f.final_field.lower()))
-               
                 except Mapping.DoesNotExist:
                     os.remove(settings.BASE_DIR+'/filesfolder/'+savedfile)
-                    return HttpResponse(request.POST.get("erp") + '  ERP is not in Mapping Table.' )
+                    return HttpResponse(request.POST.get("erp") + 'is not in Audtech System.' )
             for idx in range(0,len(df)):
                 obj=FinalTable()
                 for x in pairs: 

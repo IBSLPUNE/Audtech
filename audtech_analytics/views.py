@@ -1,5 +1,6 @@
 from django.shortcuts import render,redirect
-from customers.models import FinalTable,Mapping
+from customers.models import Mapping
+from audtech_analytics.models import FinalTable
 from django.http import HttpResponse
 from django.views.generic.edit import FormView
 from customers.forms import ClientForm,EngagementForm,ERPform
@@ -9,7 +10,8 @@ from tenant_schemas.utils import schema_context
 # Create your views here.
 def DisplayData(request):
     context={}
-    if request.method=="GET":
+    if request.method=="GET":      
+      with schema_context('testtest'):  
         context['objects']=FinalTable.objects.all()
         return render(request,'showdata.html',context)
 """
@@ -47,7 +49,7 @@ def ERPMap (request):
         context['form']=form
         data=Mapping.objects.filter(erp=request.POST.get('erp'))
         context['data']=data
-            
+        context['form']=form
         return render(request,'ERPForm.html',context)
     elif request.method =='POST':
         form = ERPform(request.POST,request.FILES)
@@ -57,10 +59,8 @@ def ERPMap (request):
             form=ERPform()
             context['form']=form
             obj=Mapping.objects.create(source_filed=request.POST.get("source_filed"),final_field=request.POST.get("final_field"),transaction_type=request.POST.get("transaction_type"),erp=request.POST.get("erp"))
-            data=Mapping.objects.filter(erp=request.POST.get('erp'))
-            context['data']=data
-            
-       
+        else:
+            context['form']=form
     return render(request,'ERPForm.html',context)
 
 from tenant_schemas.utils import schema_context
@@ -92,4 +92,4 @@ def ClientTable(request):
     Context = { 'data':data }
     return render(request,'ClientTable.html',Context)
 def AnalyticsBoard(request):
-    return render(request,'analytics.htmlchartjs cdn')
+    return render(request,'analytics.html')

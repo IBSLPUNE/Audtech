@@ -1,10 +1,47 @@
-
 {% load crispy_forms_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+  <style>
+      .form-control{
+        width: 50%;
+      }
+    .select{
+        width:50%;
+    }
+    </style>
+{% include 'nav.html' %}
+<div class="container"  align=center >
 <h3> Financial System-Audtech Mapping</h3>
-<div class="row" align=Center style=" width:400px">
     {% crispy form %}
- </div>
+</div>
 
-{% for d in data %}
-<p>{{d.erp}}  {{d.final_field}}   {{d.source_field}}</p>
-{% endfor %}
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th> ERP </th>
+            <th>System Field</th>
+            <th> Audtech Field</th>
+            </tr>
+    </thead>
+    <tbody>
+            {% for d in data %}
+        <tr>
+            <td>{{d.erp}} </td>
+            <td>{{d.source_field}} </td>
+            <td>{{d.final_field}}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+   
+
