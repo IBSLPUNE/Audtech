@@ -1,6 +1,6 @@
 from forms import TenantForm,GetFile
-from django.shortcuts import render
-from django.http import HttpResponse,Http404
+from django.shortcuts import redirect,render
+from django.http import HttpResponse,Http404,JsonResponse
 from models import Client
 import pandas as pd
 from django.conf import settings
@@ -9,7 +9,10 @@ from audtech_analytics.models import FinalTable
 from django.core.files.storage import FileSystemStorage
 from tenant_schemas.utils import  schema_context
 import os
+from django.db.models import Sum,Count
+import json
 from django.contrib.auth.models import User
+
 def CreateTenant(request):
     context={}
     if request.method=="GET":
@@ -19,9 +22,9 @@ def CreateTenant(request):
     elif request.method=="POST":
         form=TenantForm(request.POST)
         context['form']=form
-       
         if form.is_valid():
-            obj=Client(domain_url=request.POST.get("domain_url"),schema_name=request.POST.get("schema_name"))
+            obj=Client(domain_url=(request.POST.get("domain_url")+'.audtech.com'),schema_name=request.POST.get("domain_url"))
+            print(obj)
             user=User.objects.create_user(username=request.POST.get("username"),password=request.POST.get("password"))
             obj.user=user
             obj.user_id=user.id
@@ -32,6 +35,7 @@ def CreateTenant(request):
   
 def ProcessFile(request):
     context={}
+    schema_context(request.session.get('schema_name'))
     context['clientname']=request.session.get('clientname')
     if request.method=="GET":
         form=GetFile()
@@ -39,7 +43,7 @@ def ProcessFile(request):
         return render(request,'uploaddata.html',context)
 
     elif request.method=="POST":
-       with schema_context(request.session.get("schema_name")):
+       with schema_context(request.session.get('schema_name')):
          form=GetFile(request.POST,request.FILES)
          if form.is_valid():
             myfile=request.FILES['inputfile']
@@ -58,11 +62,36 @@ def ProcessFile(request):
                     pairs.append((i,f.final_field.lower()))
                 except Mapping.DoesNotExist:
                     os.remove(settings.BASE_DIR+'/filesfolder/'+savedfile)
-                    return HttpResponse(request.POST.get("erp") + 'is not in Audtech System.' )
+                    return HttpResponse(str(i) + 'is not in Audtech System.' )
             for idx in range(0,len(df)):
                 obj=FinalTable()
                 for x in pairs: 
-                    exec("obj.%s = '%s'" %(x[1],df[x[0]][idx]))
+                    arg2=df[x[0]][idx]
+                    try:
+                        arg2.replace("'","")
+                    except:
+                        pass
+                    if x[1]=="engangement":
+                        obj.engangement=request.session.get("engagement_name")
+                        continue
+                    exec("obj.%s = '%s'" %(x[1],arg2))
                 obj.save()
+                # data = {'is_valid': True}
+                # dump = json.dumps(data)
             os.remove(settings.BASE_DIR+'/filesfolder/'+savedfile)
-            return HttpResponse('<div align=Center> <h2> Data is loaded Successfully </h2> </div>'+df.to_html(index=False,classes="table table-striped table-bordered table-hover table-condensed",))
+            request.session['filename']=savedfile
+            # request.session['dataset']=data1
+            request.session['transaction']=df.shape[0]
+            engs=FinalTable.objects.values_list('engangement',flat = True).distinct()
+            FinalTable.objects.create(client=request.session.get('clientname'),
+            engangement=request.session.get("engagement_name"),user_id=request.session.get('username'))
+            # dataset=FinalTable.objects \
+            #            .values('acct_category')\
+            #            .annotate(survivd_count=Count('status_op_posted_unposted'),not_survived_count=Count('type_regular'))
+            # request.session['dataset']=dataset
+            #request.session['engagement']=list(engs.pop())
+            # df column name sum function ---- request.session['debit']= FinalTable.objects.aggregate(Sum('dr_gl_curr_code')).values()[0]
+            #df column name sum function ---- request.session['debit']= FinalTable.objects.aggregate(Sum('dr_gl_curr_code')).values()[0]
+            #df column name sum function ---- request.sesson['credit']= FinalTable.objects.aggregate(Sum('cr_gl_curr_code')).values()[0]
+            # return JsonResponse(data)
+            return render(request,'buttons.html',{'frame':df.to_html()})

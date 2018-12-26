@@ -1,0 +1,14 @@
+{% load crispy_forms_tags %}
+{% include 'nav.html' %}
+<style>
+        .form-control{
+          width: 50%;
+        }
+      .select{
+          width:50%;
+      }
+      </style>
+<div class="container">
+        <h2>Create User</h2>
+        {% crispy form %}
+      </div>

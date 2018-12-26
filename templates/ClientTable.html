@@ -1,12 +1,14 @@
+{% include 'nav.html' %}
+{% load crispy_forms_tags %}
 
 {% block content %}
-{% load staticfiles %}
-  <div>
-      <a href="/ClientRegister/">
-          <button> New Client </button>
-      </a>
-  </div>
-
+ 
+<div align=right >
+        <a href="/ClientRegister/">
+            <button class="btn btn-primary" style="background-color: blueviolet;width: 10%;" > New Client </button>
+        </a>
+</div> 
+ <div class="tablediv">
   <table id="example" class="table table-bordered" style="width:100%" style="height:100% ">
         <thead class="thead-inverse">
             <tr>
@@ -18,7 +20,6 @@
                 <th>registration_no</th>
                 <th>country</th>
                 <th>starting_date</th>
-                <th>Action</th>
             </tr>
         </thead>
         <tbody>
@@ -32,10 +33,7 @@
                 <td>{{ data.registration_no|default:"null"}}</td>
                 <td>{{ data.country|default:"null"}}</td>
                 <td>{{ data.starting_date|default:"null"}}</td>
-                <!-- <td> -->
-                    <!-- <a href="{% url 'Engagement' pk=data.id %}"> -->
-                       <!-- <button img src = "{% static  'chevron-01-512.png'%}" width= "150px"></button> </a> -->
-                <!-- </td> -->
+      
             </tr>
               {% endfor %}
         </tbody>
@@ -46,4 +44,7 @@
             </tr>
         </tfoot>
     </table>
+</div>
+</body>
+</html>
 {% endblock %}
