@@ -1,0 +1,47 @@
+{% extends "nav.html" %}
+{% block content %}
+{% load humanize %}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap.min.css">
+<div id="dvData">
+        <table  class="table" id="JEuser" style="">
+            <thead>
+                    <tr>
+                            <th>JournalDate</th>
+                            <th>PostingDate</th>
+                            <th>MainAccountCode</th>
+                            <th>MainAccountName</th>
+                            <th>DebitAmount</th>
+                            <th>CreditAmount</th>
+                            <th>DocumentHeaderText</th>
+                    </tr>
+            </thead>
+    <tbody>
+            {% for JE in JvP %}
+            <tr>
+                <td>{{JE.JournalDate}}</td>
+                <td>{{JE.PostingDate}}</td>
+                <td>{{JE.MainAccountCode}}</td>
+                <td>{{JE.MainAccountName}}</td>
+                <td>{{JE.DebitAmount|intword}}</td>
+                <td>{{JE.CreditAmount|intword}}</td>
+                <td>{{JE.DocumentHeaderText}}</td>
+                </tr>
+            {% endfor %}
+    </tbody>
+<tfoot>
+    <tr>
+        <td>
+        </td>
+    </tr>
+</tfoot>
+        </table> 
+    </div>
+    <script src="    https://code.jquery.com/jquery-3.3.1.js"></script>
+    <script src=" https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap.min.js"></script>
+    <script>
+    $(document).ready(function() {
+    $('#JEuser').DataTable();
+} );
+</script>
+    {% endblock %}

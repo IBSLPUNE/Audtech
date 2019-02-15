@@ -1,0 +1,85 @@
+{% extends "nav.html" %}
+{% block content %}
+{% load humanize %}
+{% load widget_tweaks %}
+
+<form method="POST">
+        {% csrf_token %}
+    <div class=""  align=center >
+        <div class="box box-primary">
+            <div class="box-body">
+            <h3>ss </h3>
+            {% if form.non_field_errors %}
+            <div class="alert alert-danger" role="alert">
+              {% for error in form.non_field_errors %}
+                {{ error }}
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+          {% endif %}
+    
+      {% for field in form.visible_fields %}
+        <div class="form-group col-sm-4">
+          {{ field.label_tag }}
+          {% if form.is_bound %}
+            {% if field.errors %}
+              {% render_field field class="form-control is-invalid" %}
+              {% for error in field.errors %}
+                <div class="invalid-feedback">
+                  {{ error }}
+                </div>
+              {% endfor %}
+            {% else %}
+              {% render_field field class="form-control is-valid" %}
+            {% endif %}
+          {% else %}
+            {% render_field field class="form-control" %}
+          {% endif %}
+    
+          {% if field.help_text %}
+            <small class="form-text text-muted">{{ field.help_text }}</small>
+          {% endif %}
+        </div>
+      {% endfor %}
+      <button  type="submit" class="button">Submit</button>
+    </form>
+<div class="wmd-view-topscroll">
+        <div class="scroll-div1">
+        </div>
+    </div>
+    <div class="wmd-view">
+        <div class="scroll-div2">
+    <table  class="table" id="JEuser" style="">
+    <thead>
+        <th>Account Category</th>
+        <th>Journal Date</th>
+         <th>Main Account Code</th>
+         <th>Main Account Name</th>
+         <th>Sub Account Code</th>
+         <th>Sub Account Name</th>       
+         <th>Debit Amount</th>
+         <th>Credit Amount</th>
+         <th>Debit Amount FC</th>
+         <th>Credit Amount FC</th> 
+        </thead>
+        {% for JV in JEuser %}
+        <tr>
+          <td>{{JV.AccountCategory}}</td>
+          <td>{{JV.JournalDate}}</td>
+          <td>{{JV.MainAccountCode}}</td>
+          <td>{{JV.MainAccountName}}</td>
+          <td>{{JV.SubAccountCode}}</td>
+          <td>{{JV.SubAccountName}}</td>
+          <td>{{JV.DebitAmount|intword}}</td>
+          <td>{{JV.CreditAmount|intword}}</td>
+          <td>{{JV.DebitAmountFC|intword}}</td>
+          <td>{{JV.CreditAmountFC|intword}}</td>
+            </tr>
+            {% empty %}
+          {% endfor %}
+    </table> 
+</div>
+</div>
+
+    {% endblock %}

@@ -12,12 +12,7 @@
 <body>
 
 <div class="container">
-  {% if not objects %}
-  <b>No Data</b>
-  {% endif %}
-  {% for i in objects %}
-  <b>{{ i}}</b>
-  {% endfor %}
+{{objects|safe}}
 </div>
 
 </body>

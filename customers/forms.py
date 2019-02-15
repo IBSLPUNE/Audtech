@@ -1,37 +1,31 @@
 from django import forms
+import urllib2
 from models import Client
 from django.contrib.auth.models import User
-from audtech_analytics.models import EndClient,Engagement
+from django.contrib.auth.models import Permission,Group
+from audtech_analytics.models import Engagement,CompanyInfo,FinalTable
 from customers.models import Mapping
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit
-
+from crispy_forms.layout import Submit,Layout
+from crispy_forms.bootstrap import AppendedText
+from audtech_analytics.constants import Country_list
+from crispy_forms.layout import Layout, Submit, Row, Column
+from audtech_project import settings
+from tenant_schemas.utils import schema_context
 
 #add login required to required views
 
 class TenantForm(forms.ModelForm):
-    email=forms.EmailField( required=False,label='Your Email')
-    ls=(("Manfacturing","Manfacturing"),
-       ("Audit Firm","Audit Firm"))
-    Country_list=(('India','India'),('USA','USA'))
-    Company_Choice=forms.ChoiceField( choices=ls,required=False,label='What does your organization do? ')
-    Country=forms.ChoiceField( choices=Country_list, required=False,label="Choose Country")
-    Curr=(('INR','INR'),('USD','USD'))
-    currency=forms.ChoiceField(label='Currency', choices=Curr, required=False)
     class Meta:
         model = Client
-        fields = '__all__'
-        exclude=['user','schema_name']
-
+        exclude = ['user']
+       
     def __init__(self, *args, **kwargs):
+        kwargs.setdefault('label_suffix', '')
         super(TenantForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.fields["username"]=forms.CharField(required=True,label='Your Name')
-        self.fields["domain_url"]=forms.CharField(label="Your Site Name",required=False)
-        self.helper.form_class = 'Shounak'
-        self.helper.form_id= 'form_id'
-        self.fields["password"]=forms.CharField(widget=forms.PasswordInput,required=True)
-        self.fields["name"]=forms.CharField(required=True,label="Company Name")
+        self.fields['username']=forms.CharField(max_length=80,label='Username')
+        self.fields['password']=forms.CharField(max_length=80,widget=forms.PasswordInput,label='Password')
         self.helper.add_input(Submit('submit', 'Signup', css_class='btn-primary',css_id='submit'))
         self.helper.form_method = 'POST'
 class ERPform(forms.ModelForm):
@@ -40,6 +34,7 @@ class ERPform(forms.ModelForm):
         exclude = ('final_field',)
 
     def __init__(self, *args, **kwargs):
+        kwargs.setdefault('label_suffix', '')
         super(ERPform, self).__init__(*args, **kwargs)
         uq=Mapping.objects.values_list('final_field',flat=True).distinct()
         last=[]
@@ -47,54 +42,148 @@ class ERPform(forms.ModelForm):
             last.append((i,i))
         self.fields['final_field']=forms.ChoiceField( choices=last,label="Audtech Field")
         self.helper = FormHelper()
-        # self.helper.form_class = 'blueForms'
+        self.helper.form_class = 'formsmain'
         self.helper.add_input(Submit('submit', 'Save', css_class='btn-primary'))
         self.helper.form_method = 'POST'
+class companyinfo(forms.ModelForm):
+    class Meta:
+        model=CompanyInfo
+        fields='__all__'
+        exclude=('user_id',)
 
 class GetFile(forms.Form):
-    inputfile = forms.FileField()
-    
     def __init__(self, *args, **kwargs):
+        kwargs.setdefault('label_suffix', '')
         super(GetFile, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
-        uq=Mapping.objects.values_list('erp',flat=True).distinct()
+        uq=Engagement.objects.values_list('name',flat=True).distinct()
+        yq=Engagement.objects.values_list('engagement_name',flat=True).distinct()
+        last=[]
+        last.append(("",""))
+        for i in uq:
+            last.append((i,i))
+        eng=[]
+        eng.append(("",""))
+        for i in yq:
+            eng.append((i,i))
+        self.fields['client']=forms.ChoiceField( choices=last,required=False)
+        self.fields['engagement']=forms.ChoiceField( choices=eng,required=False)
+        self.fields['inputfile']= forms.FileField(label='Select File')
+        self.helper.form_id="form_Cli_eng"
+        self.helper.add_input(Submit('submit', 'Process', css_class='btn btn-primary ',css_id='submit_it'))
+        self.helper.form_method = 'POST'
+class match(forms.Form):
+    # User_field=forms.CharField( max_length=60, required=False)
+    class Meta:
+        model = Mapping
+        exclude = ('final_field',)
+
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault('label_suffix', '')
+        super(match, self).__init__(*args, **kwargs)
+        uq=Mapping.objects.values_list('final_field',flat=True).distinct()
         last=[]
         for i in uq:
             last.append((i,i))
-        self.fields['erp']= forms.ChoiceField(choices=last,label="Financial System")
-        self.helper.add_input(Submit('submit', 'Process', css_class='btn btn-primary js-upload-photos',css_id='submit_it'))
+        self.helper = FormHelper()
+        self.form_class='shounak'
+        self.fields['final_field']=forms.ChoiceField( choices=last,label="Audtech Field")
+        # self.fields['1']=forms.ChoiceField( choices=last,label="Audtech Field")
+        # self.fields['done'] = forms.BooleanField(required=False,label="Click if the mapping is done")
+        self.helper.add_input(Submit('submit', 'Save', css_class='btn-primary'))
         self.helper.form_method = 'POST'
 
-class ClientForm(forms.ModelForm):
-    
-    class Meta:
-        model = EndClient
-        fields = '__all__'
-    def __init__(self, *args, **kwargs):
-        super(ClientForm, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.form_class = 'Shounak'
-        self.helper.add_input(Submit('submit', 'Create Client', css_class='btn-primary'))
-        self.helper.form_method = 'POST'
-class CreateUserForm(forms.ModelForm):
-    
+from django.contrib.auth.forms import UserCreationForm
+class CreateUserForm(UserCreationForm):
     class Meta:
         model = User
-        fields = '__all__'
+        fields = ('username','first_name', 'user_permissions', 'last_name','email', 'password1', 'password2')
+        # exclude = ('user_permissions',)
+
     def __init__(self, *args, **kwargs):
+        kwargs.setdefault('label_suffix', '')
         super(CreateUserForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.helper.add_input(Submit('submit', 'Create User', css_class='btn-primary'))
+        uq=Permission.objects.values_list('name',flat=True)\
+        .filter(codename__in=['is_read','is_import','is_analytics','is_report','add_engagement'])
+        last=[]
+        for i in uq:
+            last.append((i,i))
+        self.fields['username']=forms.CharField(max_length=20, required=False)
+        # self.fields['groups'].label='Roles'
+        self.fields['user_permissions']=forms.MultipleChoiceField(choices=last,widget=forms.CheckboxSelectMultiple(),required=False)
+        self.helper.add_input(Submit('submit', 'Create User', css_class='button'))
+        self.helper.form_class ='form-control'
         self.helper.form_method = 'POST'
 
 class EngagementForm(forms.ModelForm):
 
     class Meta:
         model = Engagement
-        fields= '__all__'   
+        exclude = ('user_id','financial_management_system','peroid_frequency','additional_info')
     def __init__(self, *args, **kwargs):
+        kwargs.setdefault('label_suffix', '')
         super(EngagementForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_class = 'Shounak'
+        self.fields['name']=forms.CharField(label='Entity Name', max_length=20, required=True)
+        self.fields['fiscal_start_month']=forms.DateField(input_formats=settings.DATE_INPUT_FORMATS,widget=forms.DateInput,required=False)
+        self.fields['fiscal_end_month']=forms.DateField(widget=forms.DateInput,required=False)
+        self.fields['company_type']=forms.CharField(label='Entity Type', max_length=20, required=True)
         self.helper.add_input(Submit('submit', 'Create Enagagements', css_class='btn-primary'))
         self.helper.form_method = 'POST'
+
+class FinalTableFilter(forms.ModelForm):
+
+    class Meta:
+        model = FinalTable
+        fields= ['MainAccountCode','MainAccountName','SubAccountCode','SubAccountName','AccountCategory','JournalDate']
+    def __init__(self,request,*args, **kwargs):
+        self.request=request
+        # self.request = kwargs.pop("request")
+        kwargs.setdefault('label_suffix', '')
+        super(FinalTableFilter, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        print(self.request.session.get('clientname'))
+        with schema_context(request.session.get('schema_name')):
+            uq=FinalTable.objects.filter(client=self.request.session['clientname'],engangement=self.request.session['engangement'])\
+            .values_list('AccountCategory',flat=True).distinct()
+            last=[]
+            last.append(("",""))
+            for i in uq:
+                last.append((i,i))
+            self.fields['AccountCategory']=forms.ChoiceField(choices=last, required=False)
+            uq=FinalTable.objects.filter(client=self.request.session['clientname'],engangement=self.request.session['engangement'])\
+            .values_list('MainAccountCode',flat=True).distinct()
+            last1=[]
+            last1.append(("",""))
+            for i in uq:
+                last1.append((i,i))
+            self.fields['MainAccountCode']=forms.ChoiceField(choices=last1, required=False)
+            uq=FinalTable.objects.filter(client=self.request.session['clientname'],engangement=self.request.session['engangement'])\
+            .values_list('JournalDate',flat=True).distinct()
+            last2=[]
+            last2.append(("",""))
+            for i in uq:
+                last2.append((i,i))
+            self.fields['JournalDate']=forms.ChoiceField(choices=last2, required=False)
+            uq=FinalTable.objects.filter(client=self.request.session['clientname'],engangement=self.request.session['engangement'])\
+            .values_list('MainAccountName',flat=True).distinct()
+            last3=[]
+            last3.append(("",""))
+            for i in uq:
+                last3.append((i,i))
+            self.fields['MainAccountName']=forms.ChoiceField(choices=last3, required=False)
+            self.helper.add_input(Submit('submit', 'Result ', css_class='btn-primary'))
+            self.helper.form_method = 'POST'
+# class PermissinoForm(forms.ModelForm):
+
+#     class Meta:
+#         model = Permission
+#         fields= '__all__'
+#     def __init__(self, *args, **kwargs):
+#         kwargs.setdefault('label_suffix', '')
+#         super(PermissinoForm, self).__init__(*args, **kwargs)
+#         self.helper = FormHelper()
+#         self.helper.add_input(Submit('submit', 'Click for', css_class='btn-primary'))
+#         self.helper.form_method = 'POST'

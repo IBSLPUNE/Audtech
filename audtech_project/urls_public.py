@@ -1,10 +1,9 @@
 from django.conf.urls import url
-# from audtech_analytics.views import DisplayData
-from customers.views import CreateTenant,ProcessFile
-# from django.contrib import admin
+from customers import views as Mapping 
 from django.conf.urls import url, include
 from audtech_analytics import views 
-from audtech_project import views as Anmol
+from audtech_analytics import analytics
+from audtech_project import views as AP
 from django.conf.urls import url, include
 from django.conf.urls.static import static
 from django.conf import settings
@@ -12,33 +11,41 @@ from django.conf.urls.static import static
 
 
 handler404 = views.handler404
+handler500 =views.handler500
 urlpatterns = [
-    url(r'HomeView/?$',Anmol.HomeView.as_view()),
-    url(r'createtenant/?$', CreateTenant),
-    url(r'processfile/?$', ProcessFile),
+    url(r'HomeView/?$',AP.HomeView.as_view()),
+    url(r'login/?$', AP.LoginView),
+    url(r'logout/$', AP.LogoutView),  
+    url(r'^$', Mapping.CreateTenant),
+    url(r'processfile/?$', Mapping.ProcessFile),
+    url(r'EndProcess/?$', Mapping.EndProcess),
+    url(r'AfterProcess/?$', Mapping.AfterProcess),
     url(r'display/$', views.DisplayData),
-    url(r'analytics/$', views.AnalyticsBoard),
-    url(r'login/?$', Anmol.LoginView),
-
-    url(r'logout/$', Anmol.LogoutView),
-
-    # url('admin/', admin.site.urls),
+    url(r'CompanyInfo/$', views.CompanyInformation, name='CompanyInfo'),
+    url(r'^i18n/', include('django.conf.urls.i18n')),
     #  url(r'signup/$', views.signup, name='signup'),
     #  url(r'login/', views.login, name='login'),
-     url(r'ClientRegister/$', views.ClientRegister, name='ClientRegister'),
-     url(r'navbar/$', views.navbar, name='navbar'),
-    #   url(r'form/$', views.form, name='form'),
-     url(r'CreateUser/$', views.CreateUser, name='CreateUser'),
-     url(r'ClientTable/$',views.ClientTable,name='ClientTable'),
-     url(r'Engagement/$',views.EngagementDATA,name='Engagement'),
-     url(r'ERPMap/$',views.ERPMap,name='ERPMap'),
- 
-    #  url(r'ImportFile/$',views.ImportFile,name='ImportFile'),
-    # url('ImportMainFile/<int:pk>',views.ImportMainFile,name='ImportMainFile'),
-     #url(r'simple_upload/$',views.simple_upload,name='simple_upload'),
-    #  url(r'Table/$',views.Table,name='Table'),
-    #  url(r'MissingValues/$',views.MissingValues,name='MissingValues'),
-    #  url(r'highcharts/$',views.highcharts,name='highcharts')
-]
+    url(r'home/$', views.Home, name='home'),
+    url(r'home2/$', views.Home2, name='home2'),
+    url(r'PermissionDenied/$', views.PermissionDenied, name='PermissionDenied'),
+    url(r'main_page/$', views.main_page, name='main_page'),
+    url(r'CreateUser/$', views.CreateUser, name='CreateUser'),
+    url(r'Engagement/$',views.EngagementDATA,name='Engagement'),
+    url(r'ERPMap/$',views.ERPMap,name='ERPMap'),
+    url(r'navbar/$', views.navbar, name='navbar'),
+    url(r'analytics/$', analytics.AnalyticsBoard),
+    url(r'total_Tranasacion_according_to_users/(?P<value>[\W.\S+]+)/$', analytics.total_Tranasacion_according_to_users, name='total_Tranasacion_according_to_users'),
+    url(r'ManualJE/$', analytics.ManualJE, name='ManualJE'),
+    url(r'Jvmonth/(?P<value>[\d.\S+ \d.\S+]+)/$', analytics.Jvmonth, name='Jvmonth'),
+    url(r'SameAuthandCreate/$', analytics.SameAuthandCreate, name='Created_and_authorised_by_same_user'),
+    url(r'PostedUnposted/(?P<value>[\W.\S+]+)/$', analytics.PostedUnposted, name='PostedUnposted'),
+    url(r'Missingvalues/$', analytics.Missingvalues, name='Missingvalues'),
+    url(r'LastPeriodEneries/$',analytics.LastPeriodEneries, name='LastPeriodEneries'),
+    url(r'JVwithRelatedParties/(?P<value>[\W.\S+]+)/$', analytics.JVwithRelatedParties, name='JVwithRelatedParties'),
+    url(r'JVSummary/$', analytics.JVSummary, name='JVSummary'),
+    url(r'JVNotBalToZero/$', analytics.JVNotBalToZero, name='JVNotBalToZero'),
+    url(r'pdfconvertor/$', views.pdfconvertor, name='pdfconvertor'),
+    
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

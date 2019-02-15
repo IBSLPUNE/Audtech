@@ -1,14 +1,46 @@
+
+{% extends 'nav.html' %}
+{% block content %}
 {% load crispy_forms_tags %}
-{% include 'nav.html' %}
-<style>
-        .form-control{
-          width: 50%;
-        }
-      .select{
-          width:50%;
-      }
-      </style>
-<div class="container">
-        <h2>Create User</h2>
-        {% crispy form %}
+<div class="" >
+  {% if form %}
+  <div class="box box-primary">
+        <form method="post" class="">
+                {% csrf_token %}
+                <div class="box-body">
+                <div class="form-row">
+                  <div class="form-group col-md-6 mb-0">
+                    {{ form.username|as_crispy_field }}
+                    {{form.last_name|as_crispy_field }}
+                  </div>
+                  <div class="form-group col-md-6 mb-0">
+                    {{ form.first_name|as_crispy_field }}
+                    {{ form.email|as_crispy_field }}
+                  </div>
+                </div>
+                {{ form.user_permissions|as_crispy_field }}
+                <div class="form-row">
+                  <div class="form-group col-md-6 mb-0">
+                    {{ form.password1|as_crispy_field }}
+                  </div>
+                  <div class="form-group col-md-4 mb-0">
+                    {{ form.password2|as_crispy_field }}
+                  </div>
+                  <div class="form-group col-md-2 mb-0">
+                  </div>
+                </div>
+                <button type="submit" class="btn btn-primary">User Create</button>
+            </div>
+        </form>
+    </div>
+         <!-- <button type="submit" class="btn btn-primary">Create User</button> -->
+{% endif %}
       </div>
+<script type="text/javascript">
+	$('.form-control').attr('class','form-control col-md-12');
+    $('.form-group').attr('class','form-group col-md-6');
+//  $('#log').append($($('tbody').html()));
+	// $('.form-group').append($('<input/>',{'type':'checkbox','id':'input'}));
+</script>
+
+      {% endblock %}

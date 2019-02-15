@@ -1,15 +1,38 @@
 from django.db import models
 from tenant_schemas.models import TenantMixin
 from django.contrib.auth.models import User
+from audtech_project import settings
+from django.contrib.auth.models import AbstractUser
+
+
 
 class Client(TenantMixin):
    user=models.ForeignKey(User,on_delete=models.DO_NOTHING)
-
+  
 class Mapping(models.Model):
+    eng=models.CharField(max_length=50, blank=True, null=True)
     erp=models.CharField(max_length=200, blank=True, null=True,verbose_name='Financial System')
     transaction_type=models.CharField(max_length=200, blank=True, null=True)
     final_field=models.CharField(max_length=200, blank=True, null=True,verbose_name='Audtech Field')
     source_filed=models.CharField(max_length=200, blank=True, null=True,verbose_name='System Field')
+    column_no=models.CharField(max_length=50, blank=True, null=True)
+    
+    class Meta:
+        default_permissions = ()
+        managed = True
+
+
+class Mapping2(models.Model):
+    eng=models.CharField(max_length=50, blank=True, null=True)
+    user_id=models.CharField(max_length=50, blank=True, null=True)
+    Audtech_field=models.CharField(max_length=50, blank=True, null=True)
+    Input_field=models.CharField(max_length=50, blank=True, null=True)
+    column_no=models.CharField(max_length=50, blank=True, null=True)
+    class Meta:
+        default_permissions = ()
+        managed = True
+
+
 """
 class FinalTable(models.Model):
     client=models.CharField(max_length=200, blank=True, null=True)

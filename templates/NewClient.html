@@ -1,51 +1,36 @@
-{% load widget_tweaks %}
 
-{% include 'nav.html' %}
-<style>     
-    .form-group{
-position: relative;
-margin-bottom: 30px;
-width: 30%;
-display: flow-root;
-line-height: 1.8;
+{% extends 'nav.html' %}
+{% include "all_render.html" %}
+{% load widget_tweaks %}
+{% block content %}
+<head>
+
+<style type="text/css">
+      label{
+      text-transform: capitalize;
     }
-    .btn{
-  background-color: cadetblue;
-    }
-    label{
-        font-style: italic;
-        font-weight: bold;
-    }
-    .form-control{
-        display: block;
-width: 100%;
-padding: 0.375rem 0.75rem;
-font-size: 1rem;
-line-height: 1.5;
-color: #495057;
-background-color: #fff;
-background-clip: padding-box;
-border: 1px solid #ced4da;
-border-radius: 0.25rem;
-transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-;
-    }
-    </style>
+</style>
+</head>
 {% if form %}
 <form method="POST">
-<div class="container"  align=center >
-        <h3> Create </h3>
- {% if form.non_field_errors %}
-    <div class="alert alert-danger" role="alert">
-      {% for error in form.non_field_errors %}
-        {{ error }}
-      {% endfor %}
+    {% csrf_token %}
+<div class=""  align=center >
+    <div class="box box-primary">
+        <div class="box-body">
+        <h3> Create  Engagement</h3>
+        {% if form.non_field_errors %}
+        <div class="alert alert-danger" role="alert">
+          {% for error in form.non_field_errors %}
+            {{ error }}
+          {% endfor %}
+        </div>
+      </div>
     </div>
-  {% endif %}
+      {% endif %}
 
   {% for field in form.visible_fields %}
-    <div class="form-group">
+    <div class="form-group col-sm-4">
       {{ field.label_tag }}
-
       {% if form.is_bound %}
         {% if field.errors %}
           {% render_field field class="form-control is-invalid" %}
@@ -66,15 +51,17 @@ transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-;
       {% endif %}
     </div>
   {% endfor %}
-
-  <button type="submit" class="btn">Submit</button>
+  <button  type="submit" class="button">Submit</button>
 </form>
-  </div>
- <script>
-     $( document ).ready(function() {
-  $("#id_fiscal_start_month").datepicker({ 
-           format: 'yyyy-mm-dd'
-      });
- }); 
-                </script>
 {% endif %}
+  </div>
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+
+  <script>
+      $(function () {
+        $("#id_fiscal_start_month,#id_fiscal_end_month").datepicker({
+          format:'dd/mm/yyyy',
+});
+      });
+    </script>
+  {% endblock %}

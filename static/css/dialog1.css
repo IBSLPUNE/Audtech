@@ -1,0 +1,68 @@
+
+/* ============================================ */
+  
+.ui-dialog {
+  font-family: Verdana,Arial,sans-serif;
+  font-size: 12px;
+  background-color: #ffffff;
+}
+
+.ui-widget-content{
+    background-color: #ffffff;
+  }
+ .ui-dialog .ui-dialog-content
+  {
+      background-color: #ffffff;
+      font-family: '-apple-system', 'BlinkMacSystemFont', 'Segoe UI';
+      font-size: 15px;  
+  }
+  
+.ui-dialog .ui-dialog-titlebar
+  {
+background-color: rgb(16, 108, 230);
+  } 
+  .ui-widget-overlay
+  {
+    opacity: .70 !important; /* Make sure to change both of these, as IE only sees the second one */
+    background: rgb(50, 95, 179) !important;
+  }
+ .ui-dialog  .button-class  { 
+    display: inline-block;
+    font-size: 18px;
+    cursor: pointer;
+    margin: 5px 5px;
+    text-align: center;
+    background: #005096;
+    font-weight: bold;
+    color: #fff;
+    border-radius: 5px;
+  }
+  .ui-state-hover,
+  .ui-widget-content .ui-state-hover,
+  .ui-widget-header .ui-state-hover,
+  .ui-state-focus,
+  .ui-widget-content .ui-state-focus,
+  .ui-widget-header .ui-state-focus {
+    border: 1px solid #1c74c2;
+    background: #1c74c2 ;
+    font-weight: bold;
+    color: #fff;
+
+  }
+.ui-dialog .button-class:active {
+color:#fff;
+background-color: #337ab7;
+} 
+
+.ui-dialog .ui-dialog-buttonpane { 
+  text-align: center;
+}
+.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset { 
+  float: none;
+}
+.ui-widget.ui-widget-content{
+  background:#fff;
+}
+.ui-dialog-titlebar-close{
+  display: none;
+}

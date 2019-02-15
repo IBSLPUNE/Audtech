@@ -2,8 +2,8 @@
 <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
- <!-- Include the above in your HEAD tag -->
-<!-- <style type="text/css">
+  <!-- Include the above in your HEAD tag --> 
+ <!-- <style type="text/css">
    html {
   background-color: #aed6f1;
 }
@@ -217,14 +217,14 @@ input[type=text]:placeholder {
 #icon {
   width:60%;
 }
-</style> -->
+</style>  -->
 
 <div class="wrapper fadeInDown">
   <div id="formContent">
     <!-- Tabs Titles -->
 
-    <!-- Icon -->
-    <!-- Login Form -->
+     Icon 
+     Login Form 
     <form method="POST">
         {% csrf_token %}
         <input  type="text" id="company" class="fadeIn second" name="company" placeholder="">
@@ -233,10 +233,5 @@ input[type=text]:placeholder {
       {% if error %}<p style="color:red;">{{error}}</p>{% endif %}
       <input type="submit" class="fadeIn fourth" value="Log In"> 
    </form>
-
-    <!-- Remind Passowrd -->
-    <div id="formFooter">
-      <a class="underlineHover" href="#">Forgot Password?</a>
-    </div>
   </div>
 </div>

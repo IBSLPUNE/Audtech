@@ -1,6 +1,6 @@
 import os
 from collections import OrderedDict
-
+from django.utils.translation import ugettext_lazy as _
 # Django settings for audtech_project project.
 
 DEBUG = True
@@ -16,12 +16,20 @@ DATABASES = {
         'ENGINE': 'tenant_schemas.postgresql_backend',  # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
         'NAME': 'audtech_project',                      # Or path to database file if using sqlite3.
         'USER': 'myprojectuser',
-        'PASSWORD': 'hellothere',
+        'PASSWORD': 'root',
         'HOST': 'localhost',   # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
         'PORT': '',            # Set to empty string for default.
     }
 }
+LOGIN_URL='/login'
 
+DATE_INPUT_FORMATS=[
+    '%Y-%m-%d', '%m/%d/%Y', '%m/%d/%y', # '2006-10-25', '10/25/2006', '10/25/06'
+    '%b %d %Y', '%b %d, %Y',            # 'Oct 25 2006', 'Oct 25, 2006'
+    '%d %b %Y', '%d %b, %Y',            # '25 Oct 2006', '25 Oct, 2006'
+    '%B %d %Y', '%B %d, %Y',            # 'October 25 2006', 'October 25, 2006'
+    '%d %B %Y', '%d %B, %Y',            # '25 October 2006', '25 October, 2006'
+]
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = ['*']
@@ -34,6 +42,11 @@ TIME_ZONE = 'America/Chicago'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
+LANGUAGES = (
+    ('en-us', _('English')),
+    ('pt-pt', _('Portuguese')),
+)
+
 LANGUAGE_CODE = 'en-us'
 
 SITE_ID = 1
@@ -63,11 +76,16 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/var/www/example.com/static/"
 # STATIC_ROOT = ''
-
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 # URL prefix for static files.
 # Example: "http://example.com/static/", "http://static.example.com/"
 STATIC_URL = '/static/'
-
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': 'localhost',
+    }
+}
 # Additional locations of static files
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
@@ -100,6 +118,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     # Uncomment the next line for simple clickjacking protection:
@@ -123,11 +142,12 @@ TEMPLATES = [
             'debug': DEBUG,
             'context_processors': [
                 # Insert your TEMPLATE_CONTEXT_PROCESSORS here or use this
-                #~ 'django.core.context_processors.request',
                 'django.template.context_processors.debug',
+                'django.template.context_processors.i18n',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.static',
                 ],
             # List of callables that know how to import templates from various sources.
             'loaders': [
@@ -170,6 +190,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
 )
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'

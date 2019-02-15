@@ -2,63 +2,91 @@ from __future__ import unicode_literals
 
 from django.db import models
 from audtech_analytics import  constants
+from django.core.validators import URLValidator
 # Create your models here.
 
-    
-class EndClient(models.Model):
-     name=models.CharField(max_length=60,null=True,blank=True)
-     email=models.EmailField(blank=True, max_length=60, unique=True,null=True)
-     company_ode=models.CharField(max_length=60,null=True,blank=True,verbose_name="Company Code")
-     description=models.TextField(max_length=200, null=True,blank=True)
-     company_type= models.CharField(max_length=60,null=True,blank=True)
-     registration_no=models.CharField(max_length=60,null=True,blank=True)
-     address=models.CharField(default='', max_length=300,null=True,blank=True)
-     country=models.CharField(max_length=80,null=True,blank=True)
-     document=models.FileField(upload_to='',null=True,blank=True),
-     state=models.CharField(max_length=90,null=True,blank=True)
-     contact_no=models.CharField(max_length=90,null=True,blank=True)
-     starting_date=models.DateField(null=True,blank=True)
-     created_date=models.DateField(null=True,blank=True,auto_now_add=True)
-     def __str__(self):
-         return self.name
+class CompanyInfo(models.Model):
+    user_id=models.CharField(max_length=50,null=True)
+    name=models.CharField(max_length=50,null=True)
+    address=models.TextField(null=True)
+    city=models.CharField( max_length=50,null=True)
+    country=models.CharField( max_length=50,null=True)
+    post_code=models.CharField( max_length=50,null=True)
+    email=models.EmailField( max_length=254,null=True)
+    web_address= models.TextField(validators=[URLValidator()],null=True,blank=True)
+    phone_no=models.CharField(max_length=50,null=True,verbose_name="Contact Number")
+    class Meta:
+        default_permissions = ()
+        managed = True
 
 class Engagement(models.Model):
-    endclient=models.ForeignKey(EndClient,on_delete=models.PROTECT)
+    user_id=models.CharField(max_length=20, blank=True, null=True)
+    name=models.CharField(max_length=60,null=True,blank=True)
+    company_type= models.CharField(max_length=60,null=True,blank=True)
     engagement_name=models.CharField(max_length=90,null=True,blank=True)
     peroid_frequency=models.CharField(max_length=90,choices=constants.PEROID_FREQUENCY,null=True,blank=True)
-    financial_management_system=models.CharField(max_length=90,null=True,blank=True)
-    fiscal_start_month=models.DateField(blank=True,null=True)
+    financial_management_system=models.CharField(max_length=90,null=True,blank=True,verbose_name='System Name')
+    fiscal_start_month=models.DateField(blank=True,null=True,verbose_name='Fiscal Start Date')
+    fiscal_end_month=models.DateField(blank=True,null=True,verbose_name='Fiscal End Date')
     additional_info=models.TextField(blank=True,null=True)
     created_date=models.DateField(null=True,blank=True,auto_now_add=True)
+    class Meta:
+        permissions =(
+            ("create_eng ","Create Engagement"),
+        )
+        managed = True
 
+class Mapping(models.Model):
+    eng=models.CharField(max_length=50, blank=True, null=True)
+    client=models.CharField(max_length=200, blank=True, null=True,verbose_name='Financial System')
+    transaction_type=models.CharField(max_length=200, blank=True, null=True)
+    final_field=models.CharField(max_length=200, blank=True, null=True,verbose_name='Audtech Field')
+    source_filed=models.CharField(max_length=200, blank=True, null=True,verbose_name='System Field')
+    column_no=models.CharField(max_length=50, blank=True, null=True)
+    
+    class Meta:
+        default_permissions = ()
+        managed = True
+        
 class FinalTable(models.Model):
     client=models.CharField(max_length=200, blank=True, null=True)
     engangement=models.CharField(max_length=200, blank=True, null=True)
     user_id=models.CharField(max_length=200, blank=True, null=True)
-    upload_date=models.DateField(blank=True,null=True)
-    status_op_posted_unposted=models.CharField(max_length=200, blank=True, null=True)
-    type_regular=models.CharField(max_length=200, blank=True, null=True)
-    div_code=models.CharField(max_length=200, blank=True, null=True)
-    doc_date=models.DateField(blank=True,null=True)
-    sr_no=models.CharField(blank=True,null=True,max_length=100)
-    tr_code=models.CharField(max_length=200, blank=True, null=True)
-    doc_no=models.CharField(max_length=200, blank=True, null=True)
-    acct_category=models.CharField(max_length=200, blank=True, null=True)
-    main_acct_code=models.CharField(max_length=200, blank=True, null=True)
-    main_acct_name=models.CharField(max_length=200, blank=True, null=True)
-    sub_acct_code=models.CharField(max_length=200, blank=True, null=True)
-    sub_acct_name=models.CharField(max_length=200, blank=True, null=True)
-    dr_gl_curr_code=models.CharField(max_length=200, blank=True, null=True)
-    cr_gl_curr_code=models.CharField(max_length=200, blank=True, null=True)
-    tr_curr_code=models.CharField(max_length=200, blank=True, null=True)
-    dr_in_fc=models.CharField(max_length=200, blank=True, null=True)
-    cr_in_fc=models.CharField(max_length=200, blank=True, null=True)
-    created_by=models.CharField(max_length=200, blank=True, null=True)
-    authorised_by=models.CharField(max_length=200, blank=True, null=True)
-    auto_manual=models.CharField(max_length=200, blank=True, null=True)
-    created_date=models.DateField(null=True,blank=True,auto_now_add=True)
-
-
+    Upload_Date=models.DateField(blank=True,null=True)
+    SrNo=models.CharField(max_length=50,blank=True, null=True)
+    JournalDate=models.DateTimeField(blank=True, null=True)
+    JournalNumber=models.CharField(max_length=200, blank=True, null=True)
+    JournalType=models.CharField(max_length=200, blank=True, null=True)
+    DivisionCode=models.CharField(max_length=200, blank=True, null=True)
+    StatusPostedUnposted=models.CharField(max_length=200, blank=True, null=True)
+    PostingDate=models.DateTimeField(blank=True,null=True,verbose_name='Posting Date')
+    TransactionType=models.CharField(max_length=200, blank=True, null=True)
+    ReferenceNo=models.CharField(max_length=200, blank=True, null=True)
+    AccountCategory=models.CharField(max_length=200, blank=True, null=True)
+    MainAccountCode=models.CharField(max_length=200, blank=True, null=True)
+    MainAccountName=models.CharField(max_length=200, blank=True, null=True)
+    SubAccountCode=models.CharField(max_length=200, blank=True, null=True)
+    SubAccountName=models.CharField(max_length=200, blank=True, null=True)
+    Year=models.CharField(max_length=200, blank=True, null=True)
+    GroupName=models.CharField(max_length=200, blank=True, null=True)
+    ShortText=models.CharField(max_length=200, blank=True, null=True)
+    TaxReference=models.CharField(max_length=200, blank=True, null=True)
+    Splitbetweenheads=models.CharField(max_length=200, blank=True, null=True)
+    CreatedBy=models.CharField(max_length=200, blank=True, null=True)
+    AuthorisedBy=models.CharField(max_length=200, blank=True, null=True)
+    CurrencyCode=models.CharField(max_length=200, blank=True, null=True)
+    DebitAmount=models.CharField(max_length=200,blank=True, null=True)
+    CreditAmount=models.FloatField(blank=True, null=True)
+    DebitAmountFC=models.FloatField(blank=True, null=True)
+    CreditAmountFC=models.FloatField(blank=True, null=True)
+    DocumentHeaderText=models.FloatField( blank=True, null=True)
+    EntityCode=models.CharField(max_length=200, blank=True, null=True)
+    class Meta:
+        permissions = ( 
+            ("is_analytics", "Analytics"), 
+            ("is_read", "Only read"),
+            ("is_import","Import Data"),
+        )
 
 
 class OriginalData(models.Model):
@@ -88,4 +116,6 @@ class OriginalData(models.Model):
     c20 = models.CharField(max_length=200, blank=True, null=True)
     c21 = models.CharField(max_length=200, blank=True, null=True)
     created_date=models.DateField(null=True,blank=True,auto_now_add=True)
-
+    class Meta:
+        default_permissions = ()
+        managed = True
